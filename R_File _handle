@@ -1,0 +1,243 @@
+Getting and Setting the Working Directory
+You can check which directory the R workspace is pointing to using the getwd() function. You can also set a new working directory using setwd()function.
+
+# Get and print current working directory.
+print(getwd())
+
+# Set current working directory.
+setwd("/web/com")
+
+# Get and print current working directory.
+print(getwd())
+
+
+Reading a CSV File
+
+Following is a simple example of read.csv() function to read a CSV file available in your current working directory −
+
+data <- read.csv("input.csv")
+print(data)
+
+
+By default the read.csv() function gives the output as a data frame. This can be easily checked as follows. Also we can check the number of columns and rows.
+
+data <- read.csv("input.csv")
+
+print(is.data.frame(data))
+print(ncol(data))
+print(nrow(data))
+
+
+Get the maximum salary
+# Create a data frame.
+data <- read.csv("input.csv")
+
+# Get the max salary from data frame.
+sal <- max(data$salary)
+print(sal)
+
+
+Get the details of the person with max salary
+We can fetch rows meeting specific filter criteria similar to a SQL where clause.
+
+# Create a data frame.
+data <- read.csv("input.csv")
+
+# Get the max salary from data frame.
+sal <- max(data$salary)
+
+# Get the person detail having max salary.
+retval <- subset(data, salary == max(salary))
+print(retval)
+
+
+Get the persons in IT department whose salary is greater than 600
+# Create a data frame.
+data <- read.csv("input.csv")
+
+info <- subset(data, salary > 600 & dept == "IT")
+print(info)
+
+Get the people who joined on or after 2014
+# Create a data frame.
+data <- read.csv("input.csv")
+
+retval <- subset(data, as.Date(start_date) > as.Date("2014-01-01"))
+print(retval)
+
+
+data <- read.csv("input.csv")
+retval <- subset(data, as.Date(start_date) > as.Date("2014-01-01"))
+
+R can create csv file form existing data frame. The write.csv() function is used to create the csv file. 
+
+# Write filtered data into a new file.
+write.csv(retval,"output.csv")
+newdata <- read.csv("output.csv")
+print(newdata)
+
+FOR EXCEL FILES:
+
+You can use the following command in the R console to install the "xlsx" package
+
+install.packages("xlsx")
+
+# Verify the package is installed.
+any(grepl("xlsx",installed.packages()))
+
+# Load the library into R workspace.
+library("xlsx")
+
+# Read the first worksheet in the file input.xlsx.
+data <- read.xlsx("input.xlsx", sheetIndex = 1)
+print(data)
+
+
+FOR XML
+
+
+install.packages("XML")
+
+The xml file is read by R using the function xmlParse(). It is stored as a list in R.
+
+# Load the package required to read XML files.
+library("XML")
+
+# Also load the other required package.
+library("methods")
+
+# Give the input file name to the function.
+result <- xmlParse(file = "input.xml")
+
+# Exract the root node form the xml file.
+rootnode <- xmlRoot(result)
+
+# Find number of nodes in the root.
+rootsize <- xmlSize(rootnode)
+
+
+Details of the First Node
+Let's look at the first record of the parsed file. It will give us an idea of the various elements present in the top level node.
+
+rootnode <- xmlRoot(result)
+
+# Print the result.
+print(rootnode[1])
+
+
+# Get the first element of the first node.
+print(rootnode[[1]][[1]])
+
+# Get the fifth element of the first node.
+print(rootnode[[1]][[5]])
+
+# Get the second element of the third node.
+print(rootnode[[3]][[2]])
+
+
+XML to Data Frame
+
+
+# Convert the input xml file to a data frame.
+xmldataframe <- xmlToDataFrame("input.xml")
+print(xmldataframe)
+
+
+FROM JSON
+
+install.packages("rjson")
+
+library("rjson")
+
+# Give the input file name to the function.
+result <- fromJSON(file = "input.json")
+
+# Print the result.
+print(result)
+
+JSON TO DATAFRAME
+
+result <- fromJSON(file = "input.json")
+
+# Convert JSON file to a data frame.
+json_data_frame <- as.data.frame(result)
+
+
+Downloading and Handling WebData
+
+install.packages("RCurl")
+install.packages("XML")
+install.packages("stringr")
+install.packages("plyr")
+
+We will use the function getHTMLLinks() to gather the URLs of the files. Then we will use the function download.file() to save the files to the local system
+
+Example:
+
+url <- "http://www.geos.ed.ac.uk/~weather/jcmb_ws/"
+
+# Gather the html links present in the webpage.
+links <- getHTMLLinks(url)
+
+# Identify only the links which point to the JCMB 2015 files. 
+filenames <- links[str_detect(links, "JCMB_2015")]
+
+# Store the file names as a list.
+filenames_list <- as.list(filenames)
+
+# Create a function to download the files by passing the URL and filename list.
+downloadcsv <- function (mainurl,filename) {
+   filedetails <- str_c(mainurl,filename)
+   download.file(filedetails,filename)
+}
+
+# Now apply the l_ply function and save the files into the current R working directory.
+l_ply(filenames,downloadcsv,mainurl = "http://www.geos.ed.ac.uk/~weather/jcmb_ws/")
+
+
+DATABASE HANDLING:
+
+You can install this package in the R environment using the following command.
+
+install.packages("RMySQL")
+
+mysqlconnection = dbConnect(MySQL(), user = 'root', password = '', dbname = 'sakila',
+   host = 'localhost')
+
+# List the tables available in this database.
+ dbListTables(mysqlconnection)
+
+We can query the database tables in MySql using the function dbSendQuery(). The query gets executed in MySql and the result set is returned using the R fetch() function. Finally it is stored as a data frame in R. 
+
+
+result = dbSendQuery(mysqlconnection, "select * from actor")
+1>
+# Store the result in a R data frame object. n = 5 is used to fetch first 5 rows.
+data.frame = fetch(result, n = 5)
+print(data.fame)
+2>
+result = dbSendQuery(mysqlconnection, "select * from actor where last_name = 'TORN'")
+
+# Fetch all the records(with n = -1) and store it as a data frame.
+data.frame = fetch(result, n = -1)
+print(data)
+
+UPDATION
+
+dbSendQuery(mysqlconnection, "update mtcars set disp = 168.5 where hp = 110")
+
+Inserting Data into the Tables
+dbSendQuery(mysqlconnection,
+   "insert into mtcars(row_names, mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb)
+   values('New Mazda RX4 Wag', 21, 6, 168.5, 110, 3.9, 2.875, 17.02, 0, 1, 4, 4)"
+)
+
+
+Creating Tables in MySql
+
+dbWriteTable(mysqlconnection, "mtcars", mtcars[, ], overwrite = TRUE)
+
+Dropping Tables in MySql
+
+dbSendQuery(mysqlconnection, 'drop table if exists mtcars')
+
