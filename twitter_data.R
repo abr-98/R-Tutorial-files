@@ -3,10 +3,10 @@ library("tm")
 library("twitteR")
 library("syuzhet")
 
-consumer_key <- 'xAhTppgTiK4jZL9fDteVgzAnG'
-consumer_secret <- '6JsIxDYZ9wxU8g9twIg2fkeFz3kkZfQdLufaAaCt0pn5acgUs9'
-access_token <- '940549662242586625-50LrVtQupBmfO8wnoA3kfqaJ9vdJCtG'
-access_secret <- 'USt8PPRTyJyhvxwJpNtNxobjNRd95fft4IUNakjtFA2L5'
+consumer_key <- ''
+consumer_secret <- ''
+access_token <- ''
+access_secret <- ''
  
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 tweets <- userTimeline("realDonaldTrump", n=200)
